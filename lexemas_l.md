@@ -1,47 +1,50 @@
-# Lexemas del Traductor
+# Lexemas del Traductor Infantil
 
-Este archivo resume los lexemas del lenguaje.
-Sirve para mostrar, en la fase lexico, que palabras reservadas, operadores,
-delimitadores y patrones reconoce el analizador.
+Este archivo resume los lexemas del lenguaje infantil.
+Sirve para mostrar, en la fase lexico, que palabras cercanas al niño
+reconoce el analizador.
 
 ## Palabras reservadas
 
 | Token | Lexema |
 |---|---|
-| `DECLARAR` | `declarar` |
+| `CREAR_CAJITA` | `crear_cajita` |
+| `GUARDAR` | `guardar` |
+| `COMO` | `como` |
+| `CON` | `con` |
 | `MOSTRAR` | `mostrar` |
-| `SI` | `si` |
+| `PREGUNTAR` | `preguntar` |
+| `GUARDAR_EN` | `guardar_en` |
+| `SI_PASA` | `si_pasa` |
+| `SI_NO_PASA` | `si_no_pasa` |
 | `ENTONCES` | `entonces` |
-| `SINO` | `sino` |
 | `REPETIR` | `repetir` |
 | `VECES` | `veces` |
+| `FIN` | `fin` |
+| `TIPO_NUMERO` | `numero` |
+| `TIPO_DECIMAL` | `decimal` |
+| `TIPO_TEXTO` | `texto` |
+| `TIPO_SI_NO` | `si_no` |
 | `VERDADERO` | `verdadero` |
 | `FALSO` | `falso` |
+| `MAYOR_QUE` | `mayor_que` |
+| `MENOR_QUE` | `menor_que` |
+| `IGUAL_A` | `igual_a` |
+| `DIFERENTE_DE` | `diferente_de` |
+| `MAYOR_O_IGUAL` | `mayor_o_igual` |
+| `MENOR_O_IGUAL` | `menor_o_igual` |
+| `Y` | `y` |
+| `O` | `o` |
+| `NO` | `no` |
 
-## Operadores
+## Operadores aritmeticos
 
 | Token | Lexema |
 |---|---|
-| `ASIGNAR` | `=` |
 | `SUMA` | `+` |
 | `RESTA` | `-` |
 | `MULT` | `*` |
 | `DIV` | `/` |
-| `MAYOR` | `>` |
-| `MENOR` | `<` |
-| `MAYOR_IGUAL` | `>=` |
-| `MENOR_IGUAL` | `<=` |
-| `IGUAL_IGUAL` | `==` |
-| `DIFERENTE` | `!=` |
-
-## Delimitadores
-
-| Token | Lexema |
-|---|---|
-| `LLAVE_IZQ` | `{` |
-| `LLAVE_DER` | `}` |
-| `PAREN_IZQ` | `(` |
-| `PAREN_DER` | `)` |
 
 ## Patrones
 
@@ -55,3 +58,4 @@ delimitadores y patrones reconoce el analizador.
 ## Nota
 
 - El lexer agrega ademas el token `FIN_ARCHIVO` al final de la entrada.
+- En este lenguaje infantil, `fin` reemplaza cierres tecnicos como `}`.

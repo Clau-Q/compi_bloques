@@ -7,6 +7,17 @@ Fase 1 del proyecto enfocada solo en:
 - gramatica
 - lexemas, tokens e identificadores
 
+Esta version ya usa el vocabulario infantil acordado para el proyecto:
+
+- `crear_cajita`
+- `guardar`
+- `mostrar`
+- `preguntar`
+- `si_pasa`
+- `si_no_pasa`
+- `repetir`
+- `fin`
+
 ## Sufijos usados
 
 - `_l`: archivo orientado a la fase lexico
@@ -15,10 +26,9 @@ Fase 1 del proyecto enfocada solo en:
 
 ## Archivos que debes presentar
 
-- `lexemas_l.md`: tabla de palabras reservadas, operadores, delimitadores y patron del identificador
-- `gramatica_s.ebnf`: gramatica formal del lenguaje
-- `traductor_base/tokens_l.py`: tipos de token de la fase lexico
-- `traductor_base/definitions_l.py`: definiciones de lexemas, etiquetas e identificadores
+- `lexemas_l.md`: tabla de palabras reservadas y patrones del lenguaje infantil
+- `gramatica_s.ebnf`: gramatica formal del lenguaje infantil
+- `traductor_base/definitions_l.py`: definiciones de lexemas, etiquetas, tipos de token e identificadores
 - `traductor_base/lexer_l.py`: analizador lexico
 - `traductor_base/scanner_l.py`: escaner academico por etiquetas
 - `traductor_base/parser_s.py`: analizador sintactico
@@ -28,14 +38,14 @@ Fase 1 del proyecto enfocada solo en:
 
 ## Nombres internos
 
-En esta fase el codigo usa nombres simples en espanol, por ejemplo:
+En esta fase el codigo usa nombres alineados al lenguaje infantil, por ejemplo:
 
-- `Programa`
-- `Declaracion`
-- `Asignacion`
+- `CrearCajita`
+- `Guardar`
 - `Mostrar`
+- `Preguntar`
 - `Repetir`
-- `Si`
+- `SiPasa`
 - `AnalizadorSintactico`
 - `Escaner`
 - `CodigoFuente`
@@ -47,7 +57,6 @@ En esta fase el codigo usa nombres simples en espanol, por ejemplo:
 El identificador del lenguaje esta definido principalmente en:
 
 - `lexemas_l.md`
-- `traductor_base/tokens_l.py`
 - `traductor_base/lexer_l.py`
 - `traductor_base/definitions_l.py`
 

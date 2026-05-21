@@ -2,23 +2,24 @@ from __future__ import annotations
 
 """
 Este archivo implementa un escaner academico por etiquetas.
-Su funcion es recorrer el texto y devolver lexemas con etiquetas como
-DECLARACION, IMPRESION o REPETICION para apoyar la exposicion teorica.
+Su funcion es recorrer el texto y devolver lexemas con etiquetas del
+lenguaje infantil para apoyar la exposicion teorica.
 """
 
 import re
 
 from .definitions_l import (
+    CodigoFuente,
     EtiquetasInfantiles,
+    LexemasInfantiles,
+    RegistroToken,
     lexema_a_etiqueta,
-    simbolos_compuestos,
 )
-from .sourcecode_l import CodigoFuente
-from .token_l import RegistroToken
 
 
 class Escaner:
     """Recorre el codigo fuente y genera registros etiquetados."""
+
     def __init__(self, codigo_fuente: CodigoFuente):
         self.codigo = codigo_fuente.texto
         self.codigo_fuente = codigo_fuente
@@ -65,7 +66,7 @@ class Escaner:
         if self.caracter_actual != '"':
             self.errores.append(
                 {
-                    "mensaje": "Cadena sin cerrar.",
+                    "mensaje": "El texto no se cerro.",
                     "linea": self.numero_linea,
                     "contenido": self.__obtener_contenido_linea_actual(),
                 }
@@ -85,24 +86,20 @@ class Escaner:
                 if cantidad_puntos > 1:
                     self.errores.append(
                         {
-                            "mensaje": "Numero decimal invalido.",
+                            "mensaje": "El numero decimal tiene demasiados puntos.",
                             "linea": self.numero_linea,
                             "contenido": self.__obtener_contenido_linea_actual(),
                         }
                     )
                     return None
             lexema += self.caracter_actual
-        if (
-            self.caracter_actual
-            and not self.caracter_actual.isspace()
-            and self.caracter_actual not in "{}()=+-*/><!,&|"
-        ):
+        if self.caracter_actual and not self.caracter_actual.isspace() and self.caracter_actual not in "+-*/":
             while self.caracter_actual and re.match(r"[A-Za-z_]", self.caracter_actual):
                 lexema += self.caracter_actual
                 self.__obtener_siguiente_caracter()
             self.errores.append(
                 {
-                    "mensaje": "Numero seguido por texto invalido.",
+                    "mensaje": "Un numero no puede seguir pegado a una palabra.",
                     "linea": self.numero_linea,
                     "contenido": self.__obtener_contenido_linea_actual(),
                 }
@@ -110,12 +107,9 @@ class Escaner:
             return None
         if self.caracter_actual:
             self.indice -= 1
-        etiqueta = (
-            EtiquetasInfantiles.FLOTANTE if "." in lexema else EtiquetasInfantiles.NUMERO
-        )
-        return RegistroToken(lexema, etiqueta, self.numero_linea, indice_inicio)
+        return RegistroToken(lexema, EtiquetasInfantiles.NUMERO, self.numero_linea, indice_inicio)
 
-    def __leer_identificador(self):
+    def __leer_palabra(self):
         indice_inicio = self.indice - 1
         lexema = self.caracter_actual
         while self.__obtener_siguiente_caracter() and (
@@ -127,22 +121,11 @@ class Escaner:
         etiqueta = lexema_a_etiqueta.get(lexema, EtiquetasInfantiles.ID)
         return RegistroToken(lexema, etiqueta, self.numero_linea, indice_inicio)
 
-    def __leer_caracter_especial(self):
+    def __leer_simbolo(self):
         indice_inicio = self.indice - 1
         lexema = self.caracter_actual
-        dos_caracteres = self.codigo[indice_inicio:indice_inicio + 2]
-        if dos_caracteres in simbolos_compuestos:
-            self.indice += 1
-            return RegistroToken(
-                dos_caracteres,
-                simbolos_compuestos[dos_caracteres],
-                self.numero_linea,
-                indice_inicio,
-            )
         if lexema in lexema_a_etiqueta:
-            return RegistroToken(
-                lexema, lexema_a_etiqueta[lexema], self.numero_linea, indice_inicio
-            )
+            return RegistroToken(lexema, lexema_a_etiqueta[lexema], self.numero_linea, indice_inicio)
         self.errores.append(
             {
                 "mensaje": "Caracter no reconocido.",
@@ -181,13 +164,27 @@ class Escaner:
                     self.tokens.append(token)
                 continue
             if self.caracter_actual.isalpha() or self.caracter_actual == "_":
-                token = self.__leer_identificador()
+                token = self.__leer_palabra()
                 if token:
                     self.tokens.append(token)
                 continue
-            token = self.__leer_caracter_especial()
-            if token:
-                self.tokens.append(token)
+            if self.caracter_actual in {
+                LexemasInfantiles.MAS,
+                LexemasInfantiles.MENOS,
+                LexemasInfantiles.MULTIPLICA,
+                LexemasInfantiles.DIVIDE,
+            }:
+                token = self.__leer_simbolo()
+                if token:
+                    self.tokens.append(token)
+                continue
+            self.errores.append(
+                {
+                    "mensaje": "Caracter no reconocido.",
+                    "linea": self.numero_linea,
+                    "contenido": self.__obtener_contenido_linea_actual(),
+                }
+            )
         return self.tokens
 
 

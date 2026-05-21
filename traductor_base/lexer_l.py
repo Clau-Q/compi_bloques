@@ -2,16 +2,16 @@ from __future__ import annotations
 
 """
 Este archivo implementa el analizador lexico.
-Lee el codigo fuente caracter por caracter y lo transforma en una lista
-de tokens que luego usa el analizador sintactico.
+Lee el codigo fuente infantil caracter por caracter y lo transforma en
+una lista de tokens para el analizador sintactico.
 """
 
+from .definitions_l import PALABRAS_RESERVADAS, TipoToken, Token, simbolos_simples
 from .errors_ls import ErrorLexico
-from .tokens_l import PALABRAS_RESERVADAS, TipoToken, Token
 
 
 def analizar_lexicamente(texto_fuente: str) -> list[Token]:
-    """Convierte el texto fuente en tokens del lenguaje."""
+    """Convierte el texto fuente en tokens del lenguaje infantil."""
     lista_tokens: list[Token] = []
     indice = 0
     linea = 1
@@ -44,54 +44,30 @@ def analizar_lexicamente(texto_fuente: str) -> list[Token]:
             lista_tokens.append(Token(TipoToken.SALTO_LINEA, lexema, linea_inicio, columna_inicio))
             continue
 
-        dos_caracteres = texto_fuente[indice:indice + 2]
-        if dos_caracteres in {">=", "<=", "==", "!="}:
-            tipo_token = {
-                ">=": TipoToken.MAYOR_IGUAL,
-                "<=": TipoToken.MENOR_IGUAL,
-                "==": TipoToken.IGUAL_IGUAL,
-                "!=": TipoToken.DIFERENTE,
-            }[dos_caracteres]
-            lista_tokens.append(Token(tipo_token, avanzar(2), linea_inicio, columna_inicio))
-            continue
-
-        mapa_simbolo_simple = {
-            "=": TipoToken.ASIGNAR,
-            "+": TipoToken.SUMA,
-            "-": TipoToken.RESTA,
-            "*": TipoToken.MULT,
-            "/": TipoToken.DIV,
-            ">": TipoToken.MAYOR,
-            "<": TipoToken.MENOR,
-            "{": TipoToken.LLAVE_IZQ,
-            "}": TipoToken.LLAVE_DER,
-            "(": TipoToken.PAREN_IZQ,
-            ")": TipoToken.PAREN_DER,
-        }
-        if caracter in mapa_simbolo_simple:
+        if caracter in simbolos_simples:
             lista_tokens.append(
-                Token(mapa_simbolo_simple[caracter], avanzar(), linea_inicio, columna_inicio)
+                Token(simbolos_simples[caracter], avanzar(), linea_inicio, columna_inicio)
             )
             continue
 
         if caracter == '"':
             avanzar()
-            caracteres_cadena: list[str] = []
+            caracteres_texto: list[str] = []
             while indice < longitud and texto_fuente[indice] != '"':
                 if texto_fuente[indice] == "\n":
                     raise ErrorLexico(
-                        f"Cadena sin cerrar en linea {linea_inicio}, columna {columna_inicio}."
+                        f"El texto comenzo en la linea {linea_inicio}, pero nunca se cerro."
                     )
-                caracteres_cadena.append(avanzar())
+                caracteres_texto.append(avanzar())
             if indice >= longitud:
                 raise ErrorLexico(
-                    f"Cadena sin cerrar en linea {linea_inicio}, columna {columna_inicio}."
+                    f"El texto comenzo en la linea {linea_inicio}, pero nunca se cerro."
                 )
             avanzar()
             lista_tokens.append(
                 Token(
                     TipoToken.CADENA,
-                    "".join(caracteres_cadena),
+                    "".join(caracteres_texto),
                     linea_inicio,
                     columna_inicio,
                 )
@@ -121,12 +97,12 @@ def analizar_lexicamente(texto_fuente: str) -> list[Token]:
             continue
 
         if caracter.isalpha() or caracter == "_":
-            partes_identificador = [avanzar()]
+            partes_palabra = [avanzar()]
             while indice < longitud and (
                 texto_fuente[indice].isalnum() or texto_fuente[indice] == "_"
             ):
-                partes_identificador.append(avanzar())
-            lexema = "".join(partes_identificador)
+                partes_palabra.append(avanzar())
+            lexema = "".join(partes_palabra)
             tipo_token = PALABRAS_RESERVADAS.get(lexema, TipoToken.ID)
             lista_tokens.append(Token(tipo_token, lexema, linea_inicio, columna_inicio))
             continue

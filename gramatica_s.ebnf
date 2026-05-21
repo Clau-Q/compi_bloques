@@ -1,45 +1,50 @@
-(* Este archivo define la gramatica formal del lenguaje en notacion EBNF. *)
-(* Sirve como base del analizador sintactico y muestra que estructuras *)
-(* son validas dentro del programa, como declaraciones, repeticiones y si/sino. *)
+(* Este archivo define la gramatica formal del lenguaje infantil en notacion EBNF. *)
+(* Sirve como base del analizador sintactico y muestra una logica secuencial, *)
+(* guiada y cercana al pensamiento de un niño principiante. *)
 
-programa            = separadores , lista_sentencias , EOF ;
+programa         = separadores , { sentencia , separadores } , EOF ;
 
-lista_sentencias    = sentencia , { separadores , sentencia } , [ separadores ] ;
+sentencia        = crear_cajita
+                 | guardar
+                 | mostrar
+                 | preguntar
+                 | repetir
+                 | si_pasa ;
 
-sentencia           = declaracion
-                    | asignacion
-                    | mostrar
-                    | repetir
-                    | si ;
+crear_cajita     = "crear_cajita" , identificador , "como" , tipo ;
+guardar          = "guardar" , identificador , "con" , expresion ;
+mostrar          = "mostrar" , expresion ;
+preguntar        = "preguntar" , cadena , "guardar_en" , identificador ;
+repetir          = "repetir" , expresion , "veces" , bloque ;
+si_pasa          = "si_pasa" , condicion , "entonces" , bloque , [ "si_no_pasa" , bloque ] ;
 
-declaracion         = "declarar" , identificador , "=" , expresion ;
-asignacion          = identificador , "=" , expresion ;
-mostrar             = "mostrar" , expresion ;
-repetir             = "repetir" , expresion , "veces" , bloque ;
-si                  = "si" , condicion , "entonces" , bloque , [ "sino" , bloque ] ;
+bloque           = separadores , { sentencia , separadores } , "fin" ;
 
-bloque              = "{" , separadores , [ lista_sentencias ] , "}" ;
+condicion        = condicion_y , { "o" , condicion_y } ;
+condicion_y      = condicion_no , { "y" , condicion_no } ;
+condicion_no     = [ "no" ] , comparacion ;
+comparacion      = expresion , [ operador_relacional , expresion ] ;
 
-condicion           = expresion_relacional
-                    | booleano
-                    | identificador ;
+expresion        = termino , { operador_aditivo , termino } ;
+termino          = factor , { operador_multiplicativo , factor } ;
+factor           = numero
+                 | cadena
+                 | booleano
+                 | identificador ;
 
-expresion           = termino , { operador_aditivo , termino } ;
-termino             = factor , { operador_multiplicativo , factor } ;
-factor              = numero
-                    | cadena
-                    | booleano
-                    | identificador
-                    | "(" , expresion , ")" ;
+tipo             = "numero" | "decimal" | "texto" | "si_no" ;
+booleano         = "verdadero" | "falso" ;
 
-expresion_relacional = expresion , operador_relacional , expresion ;
+operador_aditivo         = "+" | "-" ;
+operador_multiplicativo  = "*" | "/" ;
+operador_relacional      = "mayor_que"
+                         | "menor_que"
+                         | "igual_a"
+                         | "diferente_de"
+                         | "mayor_o_igual"
+                         | "menor_o_igual" ;
 
-operador_aditivo    = "+" | "-" ;
-operador_multiplicativo = "*" | "/" ;
-operador_relacional = ">" | "<" | ">=" | "<=" | "==" | "!=" ;
-
-identificador       = letra , { letra | digito | "_" } ;
-numero              = digito , { digito } , [ "." , digito , { digito } ] ;
-cadena              = '"' , { caracter } , '"' ;
-booleano            = "verdadero" | "falso" ;
-separadores         = { salto_linea } ;
+identificador    = letra , { letra | digito | "_" } ;
+numero           = digito , { digito } , [ "." , digito , { digito } ] ;
+cadena           = '"' , { caracter } , '"' ;
+separadores      = { salto_linea } ;

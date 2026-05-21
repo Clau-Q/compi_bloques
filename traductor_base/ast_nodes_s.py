@@ -2,8 +2,8 @@ from __future__ import annotations
 
 """
 Este archivo define los nodos del arbol sintactico.
-Sirve para representar en memoria la estructura del programa despues de
-que el parser valida la secuencia de tokens.
+Sirve para representar en memoria la estructura del programa infantil
+despues de que el parser valida la secuencia de tokens.
 """
 
 from dataclasses import dataclass, field
@@ -25,7 +25,7 @@ class Numero(Expresion):
 
 
 @dataclass
-class Cadena(Expresion):
+class Texto(Expresion):
     valor: str
 
 
@@ -47,18 +47,23 @@ class OperacionBinaria(Expresion):
 
 
 @dataclass
+class Negacion(Expresion):
+    expresion: Expresion
+
+
+@dataclass
 class Sentencia(Nodo):
     pass
 
 
 @dataclass
-class Declaracion(Sentencia):
+class CrearCajita(Sentencia):
     nombre: str
-    valor: Expresion
+    tipo_cajita: str
 
 
 @dataclass
-class Asignacion(Sentencia):
+class Guardar(Sentencia):
     nombre: str
     valor: Expresion
 
@@ -69,13 +74,19 @@ class Mostrar(Sentencia):
 
 
 @dataclass
+class Preguntar(Sentencia):
+    mensaje: str
+    guardar_en: str
+
+
+@dataclass
 class Repetir(Sentencia):
     veces: Expresion
     cuerpo: list[Sentencia] = field(default_factory=list)
 
 
 @dataclass
-class Si(Sentencia):
+class SiPasa(Sentencia):
     condicion: Expresion
     cuerpo_si: list[Sentencia] = field(default_factory=list)
     cuerpo_sino: list[Sentencia] = field(default_factory=list)
