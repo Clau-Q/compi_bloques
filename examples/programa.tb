@@ -1,0 +1,10 @@
+declarar contador = 0
+repetir 3 veces {
+  mostrar "Hola"
+  contador = contador + 1
+}
+si contador > 0 entonces {
+  mostrar contador
+} sino {
+  mostrar "No hubo repeticiones"
+}

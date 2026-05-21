@@ -1,0 +1,45 @@
+(* Este archivo define la gramatica formal del lenguaje en notacion EBNF. *)
+(* Sirve como base del analizador sintactico y muestra que estructuras *)
+(* son validas dentro del programa, como declaraciones, repeticiones y si/sino. *)
+
+programa            = separadores , lista_sentencias , EOF ;
+
+lista_sentencias    = sentencia , { separadores , sentencia } , [ separadores ] ;
+
+sentencia           = declaracion
+                    | asignacion
+                    | mostrar
+                    | repetir
+                    | si ;
+
+declaracion         = "declarar" , identificador , "=" , expresion ;
+asignacion          = identificador , "=" , expresion ;
+mostrar             = "mostrar" , expresion ;
+repetir             = "repetir" , expresion , "veces" , bloque ;
+si                  = "si" , condicion , "entonces" , bloque , [ "sino" , bloque ] ;
+
+bloque              = "{" , separadores , [ lista_sentencias ] , "}" ;
+
+condicion           = expresion_relacional
+                    | booleano
+                    | identificador ;
+
+expresion           = termino , { operador_aditivo , termino } ;
+termino             = factor , { operador_multiplicativo , factor } ;
+factor              = numero
+                    | cadena
+                    | booleano
+                    | identificador
+                    | "(" , expresion , ")" ;
+
+expresion_relacional = expresion , operador_relacional , expresion ;
+
+operador_aditivo    = "+" | "-" ;
+operador_multiplicativo = "*" | "/" ;
+operador_relacional = ">" | "<" | ">=" | "<=" | "==" | "!=" ;
+
+identificador       = letra , { letra | digito | "_" } ;
+numero              = digito , { digito } , [ "." , digito , { digito } ] ;
+cadena              = '"' , { caracter } , '"' ;
+booleano            = "verdadero" | "falso" ;
+separadores         = { salto_linea } ;
